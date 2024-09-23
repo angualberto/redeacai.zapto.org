@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial - Açai</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="Logo Açai" class="logo">
+        <h1>Açai</h1>
+        
+        
+        <form id="login-form" action="login.php" method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        
+        <div class="social-login">
+            <button class="social-button" onclick="loginWithGoogle()">
+                <img src="logogoogle.png" alt="Login com Google" class="social-icon">
+            </button>
+            <button class="social-button" onclick="loginWithFacebook()">
+                <img src="logofacebook.png" alt="Login com Facebook" class="social-icon">
+            </button>
+            <button class="social-button" onclick="loginWithInstagram()">
+                <img src="logoinstagram.png" alt="Login com Instagram" class="social-icon">
+            </button>
+            <button class="social-button" onclick="loginWithTwitter()">
+                <img src="x.png" alt="Login com Twitter" class="social-icon">
+            </button>
+        </div>
+
+        <form action="index.html" method="get">
+            <button type="submit" class="cadastro-button">Cadastrar</button>
+        </form>
+
+        <div id="profiles">
+            <!-- Aqui serão exibidos os perfis -->
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        // Animação de entrada ao carregar a página
+        gsap.from('.container', {
+            opacity: 0,
+            y: -20,
+            duration: 1,
+            ease: 'power2.out'
+        });
+
+        // Animações em botões sociais ao passar o mouse
+        const socialButtons = document.querySelectorAll('.social-button');
+        socialButtons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                gsap.to(button, { scale: 1.1, duration: 0.2 });
+            });
+            button.addEventListener('mouseleave', () => {
+                gsap.to(button, { scale: 1, duration: 0.2 });
+            });
+        });
+    </script>
+</body>
+</html>
