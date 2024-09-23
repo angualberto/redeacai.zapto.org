@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Açai</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .logo {
+            /* Estilos para a logo, se necessário */
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .password-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px; /* Espaço para o ícone */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666; /* Cor do ícone */
+        }
+
+        .checklist {
+            margin-top: 10px;
+            list-style-type: none;
+            padding: 0;
+            display: none; /* Inicialmente invisível */
+        }
+
+        .checklist li {
+            color: red; /* Inicialmente vermelho */
+        }
+
+        .checklist li.valid {
+            color: green; /* Verde para itens válidos */
+        }
+
+        .preview {
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+            display: none; /* Inicialmente invisível */
+        }
+
+        .camera-button {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+        }
+
+        .camera-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .camera-icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="Logo Açai" class="logo">
+        <h1>Açai</h1>
+        <form id="registration-form" action="register.php" method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <input type="text" name="nome" placeholder="Nome" required>
+            <input type="text" name="sobrenome" placeholder="Sobrenome" required>
+            <input type="email" name="email" placeholder="Email" required>
+            
+            <div class="password-container">
+                <input type="password" name="senha" id="senha" placeholder="Senha" required oninput="checkPassword()">
+                <span class="toggle-password" onclick="togglePasswordVisibility('senha')">👁️</span>
+            </div>
+
+            <div class="password-container">
+                <input type="password" name="confirm_senha" id="confirm_senha" placeholder="Confirme a Senha" required oninput="checkPassword()">
+                <span class="toggle-password" onclick="togglePasswordVisibility('confirm_senha')">👁️</span>
+            </div>
+
+            <ul class="checklist" id="password-checklist">
+                <li id="length" class="invalid">A senha deve ter pelo menos 8 caracteres.</li>
+                <li id="uppercase" class="invalid">A senha deve ter pelo menos uma letra maiúscula.</li>
+                <li id="lowercase" class="invalid">A senha deve ter pelo menos uma letra minúscula.</li>
+                <li id="number" class="invalid">A senha deve ter pelo menos um número.</li>
+                <li id="special" class="invalid">A senha deve ter pelo menos um caractere especial.</li>
+                <li id="match" class="invalid">As senhas devem coincidir.</li>
+            </ul>
+
+            <h3>Instituição de Ensino</h3>
+            <input type="text" name="instituicao" placeholder="Instituição de Ensino" required>
+
+            <label for="cidade">Cidade</label>
+            <input type="text" name="cidade" id="cidade" placeholder="Cidade" required>
+            <input type="date" name="data_nascimento" id="data_nascimento" required>
+            
+            <select name="genero" required>
+                <option value="">Gênero</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+                <option value="nao_informar">Prefiro não informar</option>
+            </select>
+
+            <div>
+                <input type="file" name="foto" accept="image/*" id="foto" onchange="previewImage(event)" style="display: none;" capture="environment">
+                <label class="camera-button" for="foto">
+                    <span class="camera-icon">📷</span> Tirar Foto
+                </label>
+                <img id="preview" class="preview" src="" alt="Pré-visualização da Foto">
+            </div>
+            
+            <select name="status_civil" required>
+                <option value="">Estado Civil</option>
+                <option value="solteiro">Solteiro</option>
+                <option value="casado">Casado</option>
+                <option value="divorciado">Divorciado</option>
+            </select>
+            <input type="text" name="curso" placeholder="Curso" required>
+            <textarea name="bio" placeholder="Sobre você" maxlength="300"></textarea>
+
+            <div class="checkbox-label">
+                <input type="checkbox" name="termos" id="termos" required>
+                <label style="margin: 0;">Eu aceito os <a href="#" onclick="showTerms()">termos de uso</a>.</label>
+            </div>
+
+            <button type="submit" class="btn">Cadastrar</button>
+        </form>
+
+        <div id="termosModal" style="display:none;">
+            <h2>Termos de Uso do Açai</h2>
+            <p>Última atualização: [Data]</p>
+            <p>1. Aceitação dos Termos: Ao se registrar, você concorda em cumprir todos os termos e condições aqui descritos.</p>
+            <p>2. Informações do Usuário: Você concorda em fornecer informações verdadeiras, precisas e completas ao se registrar e a manter essas informações atualizadas.</p>
+            <p>3. Segurança da Conta: Você é responsável por manter a confidencialidade de suas credenciais de login.</p>
+            <p>4. Uso Proibido: Você concorda em não usar o serviço para atividades ilegais.</p>
+            <p>5. Modificações nos Termos: Reservamo-nos o direito de modificar estes Termos a qualquer momento.</p>
+            <p>6. Limitação de Responsabilidade: Não seremos responsáveis por danos resultantes do uso do serviço.</p>
+            <p>7. Legislação Aplicável: Estes Termos são regidos pelas leis do Brasil.</p>
+            <button onclick="closeTerms()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(id) {
+            const passwordField = document.getElementById(id);
+            passwordField.type = passwordField.type === "password" ? "text" : "password";
+        }
+
+        function checkPassword() {
+            const senha = document.getElementById('senha').value;
+            const confirmSenha = document.getElementById('confirm_senha').value;
+
+            document.getElementById('password-checklist').style.display = 'block';
+
+            const lengthValid = senha.length >= 8;
+            const uppercaseValid = /[A-Z]/.test(senha);
+            const lowercaseValid = /[a-z]/.test(senha);
+            const numberValid = /\d/.test(senha);
+            const specialValid = /[!@#$%^&*]/.test(senha);
+            const matchValid = senha === confirmSenha;
+
+            document.getElementById('length').className = lengthValid ? 'valid' : 'invalid';
+            document.getElementById('uppercase').className = uppercaseValid ? 'valid' : 'invalid';
+            document.getElementById('lowercase').className = lowercaseValid ? 'valid' : 'invalid';
+            document.getElementById('number').className = numberValid ? 'valid' : 'invalid';
+            document.getElementById('special').className = specialValid ? 'valid' : 'invalid';
+            document.getElementById('match').className = matchValid ? 'valid' : 'invalid';
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function validateForm() {
+            const isValid = document.getElementById('senha').classList.contains('valid') &&
+                            document.getElementById('confirm_senha').classList.contains('valid');
+            const termosChecked = document.getElementById('termos').checked;
+
+            if (!isValid || !termosChecked) {
+                alert('Por favor, preencha todos os campos corretamente e aceite os termos.');
+                return false; // Impede o envio
+            }
+
+            return true; // Permite o envio
+        }
+
+        function showTerms() {
+            document.getElementById('termosModal').style.display = 'block';
+        }
+
+        function closeTerms() {
+            document.getElementById('termosModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
